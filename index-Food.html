@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOOD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+/* CSS esistente */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+/* Struttura generale */
+body {
+  background-color: #1f1f1f;
+  color: #333;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
+  overflow-y: auto; /* Riattiva lo scorrimento verticale */
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Nascondi la barra di scorrimento verticale */
+}
+
+.scroll-container {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none; /* Nascondi la barra di scorrimento verticale */
+}
+
+.black-line {
+    width: 100vw;
+    height: 7vh;
+    background-color: rgb(31, 22, 24);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1vw;
+    z-index: 1000;
+}
+
+.logo {
+    height: 5vh;
+    filter: invert(1);
+}
+
+body.menu-open .logo { display: none; }
+
+#nav-container {
+    margin-left: auto;
+    position: relative;
+}
+
+/*CAROSELLI*/
+
+.carousel-container {
+    display: grid;
+    grid-template-areas:
+        ". left-top center right-top ."
+        ". left-bottom center right-bottom .";
+    gap: 1rem;
+    padding: 2rem;
+    justify-items: center;
+    overflow-y: auto;
+}
+
+.carousel-item.center {
+    grid-area: center;
+    width: 300px;
+    height: 350px;
+    margin-top: 25vh; /* Utilizza vh per spostare l'elemento centrale */
+}
+
+.carousel-item.left-top {
+    grid-area: left-top;
+}
+
+.carousel-item.left-bottom {
+    grid-area: left-bottom;
+}
+
+.carousel-item.right-top {
+    grid-area: right-top;
+}
+
+.carousel-item.right-bottom {
+    grid-area: right-bottom;
+}
+
+.carousel-item {
+    flex-shrink: 0;
+    width: 250px;
+    height: 300px;
+    border-radius: 10px;
+    background: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: 20px;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-item h3 {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    margin: 0;
+    font-size: 24px;
+    color: white;
+    transition: transform 1.5s ease, opacity 1.5s ease;
+    z-index: 10;
+}
+
+.carousel-item .read-more {
+    position: absolute;
+    top: 50%; /* Mantieni il bottone centrato verticalmente */
+    left: 50%; /* Mantieni il bottone centrato orizzontalmente */
+    transform: translate(-50%, -50%);
+    padding: 2vh 2.5vh; /* Ridimensiona il bottone per i dispositivi mobili */
+    text-align: center; /* Assicura che il testo sia centrato */
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    font-size: 2.5vh;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Assicura che il testo sia centrato orizzontalmente e verticalmente */
+}
+
+.carousel-item.show-read-more img {
+    opacity: 0.3 !important; /* Assicura che l'opacità sia mantenuta */
+}
+
+.carousel-item.show-read-more h3 {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.carousel-item.show-read-more .read-more {
+    opacity: 1;
+    display: block;
+}
+
+/* Stile per i dispositivi mobili */ 
+@media (max-width: 768px) {
+    .carousel-container {
+        grid-template-areas: 
+            "center"
+            "left-top"
+            "right-top"
+            "left-bottom"
+            "right-bottom";
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .carousel-item {
+        width: 300px; /* Adatta la larghezza alla dimensione del carosello centrale */
+        height: 350px; /* Adatta l'altezza alla dimensione del carosello centrale */
+    }
+
+    .carousel-item.center {
+        margin-top: 10vh; /* Utilizza vh per spostare l'elemento centrale */
+    }
+}
+
+
+/*CAROSELLI PIU IN GIU*/
+/* Caroselli */
+.caroselli-container {
+  width: calc(110vw - 10vw);
+  padding: 0 4vw;
+  overflow: hidden;
+  position: relative;
+  margin-top: 7vh;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.caroselli {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-left: 5vw;
+  padding-right: -5vw;
+  width: 100vw;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.caroselli-item {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 5vw;
+  min-width: 250px;
+  max-width: 300px;
+  height: 60vh;
+  margin-right: 4.5vw;
+  border-radius: 1vh;
+  background: none;
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform 0.5s, opacity 0.5s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  font-size: 5vh;
+  box-shadow: 0px 1vh 1vh rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.caroselli-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease;
+}
+
+.caroselli-item h3 {
+  position: absolute;
+  bottom: 2vh;
+  left: 2vh;
+  margin: 0;
+  font-size: 3vh;
+  color: white;
+  transition: bottom 1.5s ease, opacity 1.5s ease;
+  z-index: 10;
+}
+
+.caroselli-item .read-more {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: none;
+  padding: 2vh 3vh;
+  font-size: 2.5vh;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: 10;
+  display: none;
+}
+
+.caroselli-item.show-read-more .read-more {
+  display: block;
+  opacity: 1;
+}
+
+.caroselli-item.show-read-more img {
+  opacity: 0.3;
+}
+
+.caroselli-item.show-read-more h3 {
+  bottom: 90%;
+  opacity: 0;
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: black;
+  transform: scale(1.1);
+}
+
+#prev {
+  left: 0;
+}
+
+#next {
+  right: 0;
+}
+
+img {
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+}
+
+h1 {
+  text-align: left;
+  margin-bottom: 2vh;
+}
+
+p {
+  text-align: left;
+}
+
+
+
+/* Footer */
+.footer {
+    width: 100%;
+    background: rgb(31, 22, 24);
+    border-radius: 0;
+    position: relative;
+    bottom: 0;
+}
+
+.footer .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 3.5rem;
+    padding: 60px;
+}
+
+.footer-row .footer-col h4 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.footer-col .links {
+    margin-top: 20px;
+}
+
+.footer-col .links li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.footer-col .links li a {
+    text-decoration: none;
+    color: #bfbfbf;
+}
+
+.footer-col .links li a:hover {
+    color: #fff;
+}
+
+.footer-col p {
+    margin: 20px 0;
+    color: #bfbfbf;
+    max-width: 300px;
+}
+
+.footer-col form {
+    display: flex;
+    gap: 5px;
+}
+
+.footer-col input {
+    height: 40px;
+    border-radius: 6px;
+    background: none;
+    width: 100%;
+    outline: none;
+    border: 1px solid rgb(31, 22, 24);
+    caret-color: #fff;
+    color: #fff;
+    padding-left: 10px;
+}
+
+.footer-col input::placeholder {
+    color: #ccc;
+}
+
+.footer-col form button {
+    background: #fff;
+    outline: none;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.footer-col form button:hover {
+    background: #cecccc;
+}
+
+.footer-col .icons {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+    cursor: pointer;
+}
+
+.footer-col .icons i {
+    color: #afb6c7;
+}
+
+.footer-col .icons i:hover {
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .footer .footer-row {
+        padding: 20px;
+        gap: 1rem;
+    }
+
+    .footer-col form {
+        display: block;
+    }
+
+  .footer-col form {
+    display: block;
+  }
+
+  .footer-col form :where(input, button) {
+    width: 100%;
+  }
+
+  .footer-col form button {
+    margin: 10px 0 0 0;
+  }
+}
+
+.header-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 4rem; /* Aggiungi questa proprietà per spostare la scritta verso il basso */
+    margin-bottom: 2rem; /* Mantieni questa proprietà per la distanza dal caroselli */
+}
+
+.header-text {
+    font-size: 3rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+
+/* Stile per i dispositivi mobili */
+@media (max-width: 768px) {
+    .header-text {
+        font-size: 2rem;
+    }
+}
+
+/* Stile per la sezione "What to watch" */
+.watch-header-container {
+    width: 100%;
+    text-align: center;
+    margin-top: 4rem; /* Puoi regolare il valore per spostare la scritta più su o più giù */
+    margin-bottom: 2rem;
+}
+
+.watch-header-text {
+    font-size: 3rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Stile per i dispositivi mobili */
+@media (max-width: 768px) {
+    .watch-header-text {
+        font-size: 2rem; /* Riduci la dimensione del font per i dispositivi mobili */
+    }
+
+    .watch-header-container {
+        margin-top: 2rem; /* Regola il margine superiore per i dispositivi mobili */
+        margin-bottom: 1rem; /* Regola il margine inferiore per i dispositivi mobili */
+    }
+}
+
+/* Stile per i contenitori video */
+.video-container {
+    display: grid;
+    grid-template-areas:
+        "video-grande video-piccolo-alto"
+        "video-grande video-piccolo-basso";
+    gap: 1rem;
+    justify-items: center;
+    margin: 2rem 0;
+}
+
+.video-grande {
+    grid-area: video-grande;
+    width: 85%;
+    height: 92.5vh;
+    position: relative;
+    overflow: hidden; /* Nasconde eventuali parti eccedenti */
+}
+
+.video-piccolo-alto {
+    grid-area: video-piccolo-alto;
+    width: 65%;
+    height: 45vh;
+    position: relative;
+    overflow: hidden; /* Nasconde eventuali parti eccedenti */
+}
+
+.video-piccolo-basso {
+    grid-area: video-piccolo-basso;
+    width: 65%;
+    height: 45vh;
+    position: relative;
+    overflow: hidden; /* Nasconde eventuali parti eccedenti */
+}
+
+.video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Assicura che il video occupi tutto il contenitore */
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .video-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .video-grande, .video-piccolo-alto, .video-piccolo-basso {
+        width: 100%;
+        height: auto;
+        position: relative;
+        overflow: hidden; /* Nasconde eventuali parti eccedenti */
+    }
+
+    .video {
+        position: static;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+  <div class="black-line">
+    <a href="index.html" id="logo-link">
+        <img src="LOGO.png" alt="Logo" class="logo">
+    </a></div>
+
+  <br><br><br>
+
+   <div class="carousel-container">
+    <a href="https://facil.de/de/" class="carousel-item left-top">
+        <img src="FACIL.jpg" alt="Image 1" />
+        <h3>FACIL</h3>
+        <span class="read-more">Read More</span>
+    </a>
+    <a href="https://golvet.de/" class="carousel-item right-top">
+        <img src="golvet-berlin.jpg" alt="Image 2" />
+        <h3>GOLVET</h3>
+        <span class="read-more">Read More</span>
+    </a>
+    
+    <a href="https://www.restaurant-horvath.de/" class="carousel-item center">
+        <img src="horvath.jpg" alt="Image 3" />
+        <h3>HORVATH</h3>
+        <span class="read-more">Read More</span>
+    </a>
+    <a href="https://www.kempinski.com/en/hotel-adlon/restaurants-bars/lorenz-adlon-esszimmer?utm_medium=organic&utm_source=google&utm_campaign=KIBER2&utm_content=gmb&source=S308962248" class="carousel-item left-bottom">
+        <img src="lorenz-adlon-esszimmer.jpg" alt="Image 4" />
+        <h3>LORENZ ADLON ESSZIMMER</h3>
+        <span class="read-more">Read More</span>
+    </a>
+    <a href="https://tim-raue.com/" class="carousel-item right-bottom">
+        <img src="S_Location-Tim-Raue.jpg" alt="Image 5" />
+        <h3>RESTAURANT TIM RAUE</h3>
+        <span class="read-more">Read More</span>
+    </a>
+</div>
+
+
+<div class="header-container"> <h2 class="header-text">What to Cook</h2> </div>
+
+
+<div class="caroselli-container">
+  <button id="prev" class="nav-button">◀</button>
+  <div class="caroselli">
+
+          <div class="caroselli-item">
+              <img src="Currywurst-Recipe-31432-8ed656eee3-1632799912.jpg" alt="Image 0" />
+              <h3>CURRYWURST</h3>
+          </div>
+      
+      
+          <div class="caroselli-item">
+              <img src="PFANNKUCHEN.jpg" alt="Image 0" />
+              <h3>PFANNKUCHEN</h3>
+          </div>
+  
+          <div class="caroselli-item">
+              <img src="buletten-klassisch-834a2959e3fe404c7f95a619d6a1ad54-fjt20170103201-jpg--35765-.jpg" alt="Image 0" />
+              <h3>BULETTEN</h3>
+          </div>
+ 
+  
+          <div class="caroselli-item">
+              <img src="Eisbein-2.jpg" alt="Image 0" />
+              <h3>EISBEIN</h3>
+          </div>
+  
+
+          <div class="caroselli-item">
+              <img src="kartoffelpuffer-mit-apfelmus-rezept-bild-nr-6.jpg" alt="Image 0" />
+              <h3>KARTOFFELPUFFER</h3>
+          </div>
+  
+
+
+          <div class="caroselli-item">
+              <img src="bienenstich_44333.webp" alt="Image 0" />
+              <h3>BIENENSTICH</h3>
+          </div>
+   
+
+          <div class="caroselli-item">
+              <img src="HACKEPETER.jpg" alt="Image 0" />
+              <h3>HACKEPETER</h3>
+          </div>
+  </div>
+  <button id="next" class="nav-button">▶</button>
+</div>
+
+<div class="watch-header-container"> <div class="watch-header-text">What to watch</div> </div>
+
+
+<div class="video-container">
+  <div class="video-grande">
+      <video class="video" src="One Day in Berlin. Motion Timelapse..mp4" controls></video>
+  </div>
+  <div class="video-piccolo-alto">
+      <video class="video" src="One Day in Berlin. Motion Timelapse..mp4" controls></video>
+  </div>
+  <div class="video-piccolo-basso">
+      <video class="video" src="One Day in Berlin. Motion Timelapse..mp4" controls></video>
+  </div>
+</div>
+
+
+<br><br><br>
+
+
+
+    <section class="footer">
+        <div class="footer-row">
+          <div class="footer-col">
+            <h4>Referenti Sito</h4>
+            <ul class="links">
+            <li><a href="mailto:valerio.esposito@itirighi.edu.it">Valerio Esposito</a></li>
+            <li><a href="mailto:alessandro.dellannunziata@itirighi.edu.it">Alessandro Dell'Annunziata</a></li>
+            <li><a href="mailto:federica.manzoni@itirighi.edu.it">Federica Manzoni</a></li>
+            <li><a href="mailto:rosario.muragas@itirighi.edu.it">Rosario Muragas</a></li>
+            <li><a href="mailto:luca.verazzo@itirighi.edu.it">Luca Verazzo</a></li>
+
+            </ul>
+          </div>
+  
+          <div class="footer-col">
+            <h4>Link Utili</h4>
+            <ul class="links">
+              <li><a href="https://www.itirighi.edu.it/">I.T.I Augusto Righi</a></li>
+              <li><a href="http://r-23.de/">Ristorante</a></li>
+              <li><a href="https://www.hotel-bb.com/de/hotel/berlin-tiergarten?utm_source=gmb              -gmb&utm_medium=referral&utm_content=berlin&utm_campaign=yext">Hotel</a></li>
+              <li><a href="https://www.viveberlintours.com/it/tour-guidati-berlino-italiano/?gad_source=1&gclid=Cj0KCQiAlsy5BhDeARIsABRc6Ztabl1Ji38IAbbP-ypdgaUn31IjKfTudx0QKgPvOL2keDqqFYVMJc0aAnMVEALw_wcB">Tour</a></li>
+              <li><a href="https://www.bvg.de/en/connections/network-maps-and-routes">Trasporti</a></li>
+            </ul>
+          </div>
+  
+          <div class="footer-col"></div>
+  
+          <div class="footer-col">
+            <h4>Chi Siamo</h4>
+            <p>
+              Siamo entusiasti di presentarvi il nostro sito web per il viaggio d'istruzione a Berlino! Grazie alla passione e all'energia creativa di tutta la classe, questo sito è diventato un vero capolavoro di collaborazione.
+            </p>
+            
+            <div class="icons">
+                <a href="https://www.twitch.tv/righiminutoperminuto"><i class="fa-brands fa-twitch"></i></a>
+                <a href="https://www.instagram.com/righireport/?igsh=MXE0YmlmMGw4bTV1Ng%3D%3D#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.overflowY = 'auto';
+            document.body.style.overflowX = 'hidden';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const carouselItems = document.querySelectorAll('.carousel-item');
+
+    carouselItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault(); // Previene il comportamento predefinito del link
+
+            if (item.classList.contains('show-read-more')) {
+                const link = item.closest('a');
+                window.location.href = link.href; // Segue il link al secondo clic
+            } else {
+                carouselItems.forEach(el => el.classList.remove('show-read-more')); // Rimuove la classe dagli altri elementi
+                item.classList.add('show-read-more'); // Mostra il bottone
+            }
+        });
+    });
+
+    // Nascondi i bottoni "Read More" quando l'utente scorre la pagina
+    window.addEventListener('scroll', nascondiReadMore);
+
+    // Funzione per nascondere tutti i bottoni "Read More"
+    function nascondiReadMore() {
+        document.querySelectorAll('.carousel-item.show-read-more').forEach(item => {
+            item.classList.remove('show-read-more');
+        });
+    }
+});
+
+  // Seleziona gli elementi del carosello
+  const caroselliContainer = document.querySelector('.caroselli');
+  const caroselliItems = document.querySelectorAll('.caroselli-item');
+  const prevButton = document.querySelector('#prev');
+  const nextButton = document.querySelector('#next');
+
+  // Imposta l'indice corrente
+  let currentIndex = 0;
+
+  // Funzione per aggiornare la visualizzazione del carosello
+  function updateCaroselli() {
+    const itemWidth = caroselliItems[0].clientWidth + parseInt(getComputedStyle(caroselliItems[0]).marginRight);
+    caroselliContainer.scrollTo({
+      left: itemWidth * currentIndex,
+      behavior: 'smooth'
+    });
+  }
+
+  // Event listener per il pulsante precedente
+  prevButton.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateCaroselli();
+    }
+  });
+
+  // Event listener per il pulsante successivo
+  nextButton.addEventListener('click', () => {
+    if (currentIndex < caroselliItems.length - 1) {
+      currentIndex++;
+      updateCaroselli();
+    }
+  });
+</script>
+    
+</body>
+</html>
+
+

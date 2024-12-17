@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLOG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+/* CSS esistente */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+/* Struttura generale */
+body {
+  background-color: #1f1f1f;
+  color: #333;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
+  overflow-y: auto; /* Riattiva lo scorrimento verticale */
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Nascondi la barra di scorrimento verticale */
+}
+
+.scroll-container {
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none; /* Nascondi la barra di scorrimento verticale */
+}
+
+.black-line {
+    width: 100vw;
+    height: 7vh;
+    background-color: rgb(31, 22, 24);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1vw;
+    z-index: 1000;
+}
+
+.logo {
+    height: 5vh;
+    filter: invert(1);
+}
+
+body.menu-open .logo { display: none; }
+
+#nav-container {
+    margin-left: auto;
+    position: relative;
+}
+
+/*CAROSELLI*/
+
+.carousel-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 2rem;
+    justify-items: center;
+    overflow-y: auto;
+}
+
+.carousel-item {
+    flex-shrink: 0;
+    width: 250px;
+    height: 300px;
+    border-radius: 10px;
+    background: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: 20px;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.carousel-item.high {
+    margin-top: -20px; /* Sposta il carosello un po' più in alto */
+}
+
+.carousel-item.low {
+    margin-top: 20px; /* Sposta il carosello un po' più in basso */
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-item h3 {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    margin: 0;
+    font-size: 24px;
+    color: white;
+    transition: transform 1.5s ease, opacity 1.5s ease;
+    z-index: 10;
+}
+
+.carousel-item .read-more {
+    position: absolute;
+    top: 50%; /* Mantieni il bottone centrato verticalmente */
+    left: 50%; /* Mantieni il bottone centrato orizzontalmente */
+    transform: translate(-50%, -50%);
+    padding: 2vh 2.5vh; /* Ridimensiona il bottone per i dispositivi mobili */
+    text-align: center; /* Assicura che il testo sia centrato */
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    font-size: 2.5vh;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Assicura che il testo sia centrato orizzontalmente e verticalmente */
+}
+
+.carousel-item.show-read-more img {
+    opacity: 0.3 !important; /* Assicura che l'opacità sia mantenuta */
+}
+
+.carousel-item.show-read-more h3 {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.carousel-item.show-read-more .read-more {
+    opacity: 1;
+    display: block;
+}
+
+/* Stile per i dispositivi mobili */ 
+@media (max-width: 768px) 
+{ .carousel-container { grid-template-columns: 1fr; /* Disposizione a una colonna sui dispositivi mobili */ }}
+
+/* Footer */
+.footer {
+    width: 100%;
+    background: rgb(31, 22, 24);
+    border-radius: 0;
+    position: relative;
+    bottom: 0;
+}
+
+.footer .footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 3.5rem;
+    padding: 60px;
+}
+
+.footer-row .footer-col h4 {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.footer-col .links {
+    margin-top: 20px;
+}
+
+.footer-col .links li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.footer-col .links li a {
+    text-decoration: none;
+    color: #bfbfbf;
+}
+
+.footer-col .links li a:hover {
+    color: #fff;
+}
+
+.footer-col p {
+    margin: 20px 0;
+    color: #bfbfbf;
+    max-width: 300px;
+}
+
+.footer-col form {
+    display: flex;
+    gap: 5px;
+}
+
+.footer-col input {
+    height: 40px;
+    border-radius: 6px;
+    background: none;
+    width: 100%;
+    outline: none;
+    border: 1px solid rgb(31, 22, 24);
+    caret-color: #fff;
+    color: #fff;
+    padding-left: 10px;
+}
+
+.footer-col input::placeholder {
+    color: #ccc;
+}
+
+.footer-col form button {
+    background: #fff;
+    outline: none;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.footer-col form button:hover {
+    background: #cecccc;
+}
+
+.footer-col .icons {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+    cursor: pointer;
+}
+
+.footer-col .icons i {
+    color: #afb6c7;
+}
+
+.footer-col .icons i:hover {
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .footer {
+        position: relative;
+        bottom: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .footer .footer-row {
+        padding: 20px;
+        gap: 1rem;
+    }
+
+    .footer-col form {
+        display: block;
+    }
+
+  .footer-col form {
+    display: block;
+  }
+
+  .footer-col form :where(input, button) {
+    width: 100%;
+  }
+
+  .footer-col form button {
+    margin: 10px 0 0 0;
+  }
+}
+
+    </style>
+</head>
+<body>
+  <div class="black-line">
+    <a href="index.html" id="logo-link">
+        <img src="LOGO.png" alt="Logo" class="logo">
+    </a></div>
+
+  <br><br><br>
+
+    <div class="carousel-container">
+      <a href="Index-Palazzo Del Reichstag.html" class="carousel-item high">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 1" />
+          <h3>PALAZZO DEL REICHSTAG</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Porta Brandeburgo.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 2" />
+          <h3>PORTA BRANDEBURGO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Memoriale Olocausto.html" class="carousel-item low">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 3" />
+          <h3>MEMORIALE OLOCAUSTO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Zoo & Acquario.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 4" />
+          <h3>ZOO & ACQUARIO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+
+      <a href="Index-Museo Della Tecnica.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 5" />
+          <h3>MUSEO DELLA TECNICA</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Museo Ebraico.html" class="carousel-item high">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 6" />
+          <h3>MUSEO EBRAICO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Checkpoint Charlie.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 7" />
+          <h3>CHECKPOINT CHARLIE</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Topografia del terrore.html" class="carousel-item low">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 8" />
+          <h3>TOPOGRAFIA DEL TERRORE</h3>
+          <span class="read-more">Read More</span>
+      </a>
+
+      <a href="Index-Potsdamer platz.html" class="carousel-item high">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 9" />
+          <h3>POTSDAMER PLATZ</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Isola dei Musei.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 10" />
+          <h3>ISOLA DEI MUSEI</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Duomo.html" class="carousel-item low">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 11" />
+          <h3>DUOMO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Alexander platz.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 12" />
+          <h3>ALEXANDER PLATZ</h3>
+          <span class="read-more">Read More</span>
+      </a>
+
+      <a href="Index-East Side.html" class="carousel-item high">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 13" />
+          <h3>EAST SIDE</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Olympiastadion.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 14" />
+          <h3>OLYMPIASTADION</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Ku'Damm.html" class="carousel-item low">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 15" />
+          <h3>KU'DAMM</h3>
+          <span class="read-more">Read More</span>
+      </a>
+      <a href="Index-Museo del Muro.html" class="carousel-item">
+          <img src="photo-1528728329032-2972f65dfb3f.jpg" alt="Image 16" />
+          <h3>MUSEO DEL MURO</h3>
+          <span class="read-more">Read More</span>
+      </a>
+  </div>
+
+
+    <section class="footer">
+        <div class="footer-row">
+          <div class="footer-col">
+            <h4>Referenti Sito</h4>
+            <ul class="links">
+            <li><a href="mailto:valerio.esposito@itirighi.edu.it">Valerio Esposito</a></li>
+            <li><a href="mailto:alessandro.dellannunziata@itirighi.edu.it">Alessandro Dell'Annunziata</a></li>
+            <li><a href="mailto:federica.manzoni@itirighi.edu.it">Federica Manzoni</a></li>
+            <li><a href="mailto:rosario.muragas@itirighi.edu.it">Rosario Muragas</a></li>
+            <li><a href="mailto:luca.verazzo@itirighi.edu.it">Luca Verazzo</a></li>
+
+            </ul>
+          </div>
+  
+          <div class="footer-col">
+            <h4>Link Utili</h4>
+            <ul class="links">
+              <li><a href="https://www.itirighi.edu.it/">I.T.I Augusto Righi</a></li>
+              <li><a href="http://r-23.de/">Ristorante</a></li>
+              <li><a href="https://www.hotel-bb.com/de/hotel/berlin-tiergarten?utm_source=gmb              -gmb&utm_medium=referral&utm_content=berlin&utm_campaign=yext">Hotel</a></li>
+              <li><a href="https://www.viveberlintours.com/it/tour-guidati-berlino-italiano/?gad_source=1&gclid=Cj0KCQiAlsy5BhDeARIsABRc6Ztabl1Ji38IAbbP-ypdgaUn31IjKfTudx0QKgPvOL2keDqqFYVMJc0aAnMVEALw_wcB">Tour</a></li>
+              <li><a href="https://www.bvg.de/en/connections/network-maps-and-routes">Trasporti</a></li>
+            </ul>
+          </div>
+  
+          <div class="footer-col"></div>
+  
+          <div class="footer-col">
+            <h4>Chi Siamo</h4>
+            <p>
+              Siamo entusiasti di presentarvi il nostro sito web per il viaggio d'istruzione a Berlino! Grazie alla passione e all'energia creativa di tutta la classe, questo sito è diventato un vero capolavoro di collaborazione.
+            </p>
+            
+            <div class="icons">
+                <a href="https://www.twitch.tv/righiminutoperminuto"><i class="fa-brands fa-twitch"></i></a>
+                <a href="https://www.instagram.com/righireport/?igsh=MXE0YmlmMGw4bTV1Ng%3D%3D#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.overflowY = 'auto';
+            document.body.style.overflowX = 'hidden';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+    const carouselItems = document.querySelectorAll('.carousel-item');
+
+    carouselItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault(); // Previene il comportamento predefinito del link
+
+            if (item.classList.contains('show-read-more')) {
+                const link = item.closest('a');
+                window.location.href = link.href; // Segue il link al secondo clic
+            } else {
+                carouselItems.forEach(el => el.classList.remove('show-read-more')); // Rimuove la classe dagli altri elementi
+                item.classList.add('show-read-more'); // Mostra il bottone
+            }
+        });
+    });
+
+    // Nascondi i bottoni "Read More" quando l'utente scorre la pagina
+    window.addEventListener('scroll', nascondiReadMore);
+
+    // Funzione per nascondere tutti i bottoni "Read More"
+    function nascondiReadMore() {
+        document.querySelectorAll('.carousel-item.show-read-more').forEach(item => {
+            item.classList.remove('show-read-more');
+        });
+    }
+});
+
+</script>
+    
+</body>
+</html>
+
+
